@@ -2,7 +2,9 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import gsap from "gsap";
 import { Observer } from "gsap/all";
 import { useEffect, useRef } from "react";
+
 gsap.registerPlugin(Observer);
+
 const Marquee = ({
   items,
   className = "text-white bg-black",
@@ -16,6 +18,10 @@ const Marquee = ({
   function horizontalLoop(items, config) {
     items = gsap.utils.toArray(items);
     config = config || {};
+    
+    // Validate items
+    if (!items || items.length === 0) return null;
+    
     let tl = gsap.timeline({
         repeat: config.repeat,
         paused: config.paused,
@@ -24,14 +30,14 @@ const Marquee = ({
           tl.totalTime(tl.rawTime() + tl.duration() * 100),
       }),
       length = items.length,
-      startX = items[0].offsetLeft,
+      startX = items[0] ? items[0].offsetLeft || 0 : 0,
       times = [],
       widths = [],
       xPercents = [],
       curIndex = 0,
       pixelsPerSecond = (config.speed || 1) * 100,
       snap =
-        config.snap === false ? (v) => v : gsap.utils.snap(config.snap || 1), // some browsers shift by a pixel to accommodate flex layouts, so for example if width is 20% the first element's width might be 242px, and the next 243px, alternating back and forth. So we snap to 5 percentage points to make things look more natural
+        config.snap === false ? (v) => v : gsap.utils.snap(config.snap || 1),
       totalWidth,
       curX,
       distanceToStart,
@@ -39,14 +45,17 @@ const Marquee = ({
       item,
       i;
     gsap.set(items, {
-      // convert "x" to "xPercent" to make things responsive, and populate the widths/xPercents Arrays to make lookups faster.
       xPercent: (i, el) => {
-        let w = (widths[i] = parseFloat(gsap.getProperty(el, "width", "px")));
-        xPercents[i] = snap(
-          (parseFloat(gsap.getProperty(el, "x", "px")) / w) * 100 +
-            gsap.getProperty(el, "xPercent")
-        );
-        return xPercents[i];
+        if (!el) return 0;
+        let w = (widths[i] = parseFloat(gsap.getProperty(el, "width", "px")) || 100);
+        let x = parseFloat(gsap.getProperty(el, "x", "px")) || 0;
+        let xPercent = gsap.getProperty(el, "xPercent") || 0;
+        
+        // Ensure we don't divide by zero
+        if (w === 0) w = 100;
+        
+        xPercents[i] = snap((x / w) * 100 + xPercent);
+        return isFinite(xPercents[i]) ? xPercents[i] : 0;
       },
     });
     gsap.set(items, { x: 0 });
@@ -59,15 +68,24 @@ const Marquee = ({
       (parseFloat(config.paddingRight) || 0);
     for (i = 0; i < length; i++) {
       item = items[i];
+      if (!item) continue;
+      
       curX = (xPercents[i] / 100) * widths[i];
-      distanceToStart = item.offsetLeft + curX - startX;
-      distanceToLoop =
-        distanceToStart + widths[i] * gsap.getProperty(item, "scaleX");
+      distanceToStart = (item.offsetLeft || 0) + curX - startX;
+      distanceToLoop = distanceToStart + widths[i] * (gsap.getProperty(item, "scaleX") || 1);
+      
+      // Ensure finite values
+      let duration1 = distanceToLoop / pixelsPerSecond;
+      let duration2 = (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond;
+      
+      if (!isFinite(duration1)) duration1 = 1;
+      if (!isFinite(duration2)) duration2 = 1;
+      
       tl.to(
         item,
         {
           xPercent: snap(((curX - distanceToLoop) / widths[i]) * 100),
-          duration: distanceToLoop / pixelsPerSecond,
+          duration: duration1,
         },
         0
       )
@@ -80,11 +98,10 @@ const Marquee = ({
           },
           {
             xPercent: xPercents[i],
-            duration:
-              (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond,
+            duration: duration2,
             immediateRender: false,
           },
-          distanceToLoop / pixelsPerSecond
+          duration1
         )
         .add("label" + i, distanceToStart / pixelsPerSecond);
       times[i] = distanceToStart / pixelsPerSecond;
@@ -92,11 +109,10 @@ const Marquee = ({
     function toIndex(index, vars) {
       vars = vars || {};
       Math.abs(index - curIndex) > length / 2 &&
-        (index += index > curIndex ? -length : length); // always go in the shortest direction
+        (index += index > curIndex ? -length : length);
       let newIndex = gsap.utils.wrap(0, length, index),
         time = times[newIndex];
       if (time > tl.time() !== index > curIndex) {
-        // if we're wrapping the timeline's playhead, make the proper adjustments
         vars.modifiers = { time: gsap.utils.wrap(0, tl.duration()) };
         time += tl.duration() * (index > curIndex ? 1 : -1);
       }
@@ -109,7 +125,7 @@ const Marquee = ({
     tl.current = () => curIndex;
     tl.toIndex = (index, vars) => toIndex(index, vars);
     tl.times = times;
-    tl.progress(1, true).progress(0, true); // pre-render for performance
+    tl.progress(1, true).progress(0, true);
     if (config.reversed) {
       tl.vars.onReverseComplete();
       tl.reverse();
@@ -118,30 +134,46 @@ const Marquee = ({
   }
 
   useEffect(() => {
-    const tl = horizontalLoop(itemsRef.current, {
-      repeat: -1,
-      paddingRight: 30,
-      reversed: reverse,
-    });
+    let tl, observer;
 
-    Observer.create({
-      onChangeY(self) {
-        let factor = 2.5;
-        if ((!reverse && self.deltaY < 0) || (reverse && self.deltaY > 0)) {
-          factor *= -1;
-        }
-        gsap
-          .timeline({
-            defaults: {
-              ease: "none",
-            },
-          })
-          .to(tl, { timeScale: factor * 2.5, duration: 0.2, overwrite: true })
-          .to(tl, { timeScale: factor / 2.5, duration: 1 }, "+=0.3");
-      },
-    });
-    return () => tl.kill();
+    const timer = setTimeout(() => {
+      const validItems = itemsRef.current.filter(item => item !== null && item.offsetWidth > 0);
+      if (validItems.length === 0) return;
+
+      tl = horizontalLoop(validItems, {
+        repeat: -1,
+        paddingRight: 30,
+        reversed: reverse,
+        speed: 1,
+      });
+      
+      if (!tl) return;
+
+      observer = Observer.create({
+        onChangeY(self) {
+          let factor = 2.5;
+          if ((!reverse && self.deltaY < 0) || (reverse && self.deltaY > 0)) {
+            factor *= -1;
+          }
+          gsap
+            .timeline({
+              defaults: {
+                ease: "none",
+              },
+            })
+            .to(tl, { timeScale: factor * 2.5, duration: 0.2, overwrite: true })
+            .to(tl, { timeScale: factor / 2.5, duration: 1 }, "+=0.3");
+        },
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      if (tl) tl.kill();
+      if (observer) observer.kill();
+    };
   }, [items, reverse]);
+
   return (
     <div
       ref={containerRef}
@@ -152,7 +184,7 @@ const Marquee = ({
           <span
             key={index}
             ref={(el) => (itemsRef.current[index] = el)}
-            className="flex items-center px-16 gap-x-32"
+            className="flex items-center px-8 gap-x-16"
           >
             {text} <Icon icon={icon} className={iconClassName} />
           </span>

@@ -107,6 +107,7 @@ const Works = () => {
         text={text}
         textColor={"text-black"}
         withScrollTrigger={true}
+        titleClassName={"font-eunomia-bold"}
       />
       <div
         className="relative flex flex-col font-light"
@@ -137,17 +138,6 @@ const Works = () => {
             </div>
             {/* divider */}
             <div className="w-full h-0.5 bg-black/80" />
-            {/* framework */}
-            <div className="flex px-10 text-xs leading-loose uppercase transtion-all duration-500 md:text-sm gap-x-5 md:group-hover:px-12">
-              {project.frameworks.map((framework) => (
-                <p
-                  key={framework.id}
-                  className="text-black transition-colors duration-500 md:group-hover:text-white"
-                >
-                  {framework.name}
-                </p>
-              ))}
-            </div>
             {/* mobile preview image */}
             <div className="relative flex items-center justify-center px-10 md:hidden h-[400px]">
               <img

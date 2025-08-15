@@ -33,6 +33,7 @@ const Services = () => {
         text={text}
         textColor={"text-white"}
         withScrollTrigger={true}
+        titleClassName={"font-eunomia-bold"}
       />
       {servicesData.map((service, index) => (
         <div

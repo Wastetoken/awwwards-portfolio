@@ -87,6 +87,33 @@
   font-style: italic;
   font-display: swap;
 }
+
+/* Eunomia Regular */
+@font-face {
+  font-family: "Eunomia";
+  src: url("/fonts/eunomia/Eunomia-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Eunomia Light */
+@font-face {
+  font-family: "Eunomia";
+  src: url("/fonts/eunomia/Eunomia-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Eunomia Bold */
+@font-face {
+  font-family: "Eunomia";
+  src: url("/fonts/eunomia/Eunomia-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 @theme {
   --color-primary: #e5e5e0;
   --color-DarkLava: #393632;
@@ -94,14 +121,42 @@
   --color-gold: #cfa355;
   --font-amiamie: "Amiamie", sans-serif;
   --font-amiamie-round: "Amiamie-Round", sans-serif;
+  --font-eunomia: "Eunomia", sans-serif;
 
   --animate-marquee: marquee 40s infinite linear;
+  --animate-marquee-reverse: marquee-reverse 40s infinite linear;
   @keyframes marquee {
     from {
       transform: translateX(0);
     }
     to {
-      transform: translateX(calc(-100% - var(--gap)));
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes marquee-seamless {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-25%);
     }
   }
 }
@@ -132,5 +187,18 @@ body {
 
 @utility contact-text-responsive {
   @apply text-[42px] sm:text-[52px] md:text-[62px] lg:text-[100px];
+}
+
+@utility animate-marquee {
+  animation: marquee var(--animate-marquee);
+}
+
+@utility animate-marquee-reverse {
+  animation: marquee-reverse var(--animate-marquee-reverse);
+}
+
+@utility font-eunomia-bold {
+  font-family: var(--font-eunomia);
+  font-weight: 700;
 }
 

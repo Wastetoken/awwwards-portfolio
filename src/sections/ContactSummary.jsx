@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import Marquee from "../components/Marquee";
+import SimpleMarquee from "../components/SimpleMarquee";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
@@ -13,11 +14,9 @@ const ContactSummary = () => {
     "Excellence",
   ];
   const items2 = [
-    "contact us",
-    "contact us",
-    "contact us",
-    "contact us",
-    "contact us",
+    "contact me",
+    "contact me",
+    "contact me",
   ];
 
   useGSAP(() => {
@@ -47,12 +46,13 @@ const ContactSummary = () => {
           web application <span className="text-gold">together</span> “
         </p>
       </div>
-      <Marquee
+      <SimpleMarquee
         items={items2}
         reverse={true}
         className="text-black bg-transparent border-y-2"
         iconClassName="stroke-gold stroke-2 text-primary"
         icon="material-symbols-light:square"
+        speed={30}
       />
     </section>
   );

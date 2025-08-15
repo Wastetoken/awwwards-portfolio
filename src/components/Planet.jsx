@@ -14,11 +14,13 @@ export function Planet(props) {
   const { nodes, materials } = useGLTF("/models/Planet.glb");
 
   useGSAP(() => {
+    if (!shapeContainer.current || !shperesContainer.current || !ringContainer.current) return;
+    
     const tl = gsap.timeline();
     tl.from(shapeContainer.current.position, {
-      y: 5,
-      duration: 3,
-      ease: "circ.out",
+      y: 2,
+      duration: 2,
+      ease: "power2.out",
     });
     tl.from(
       shperesContainer.current.rotation,
@@ -26,10 +28,10 @@ export function Planet(props) {
         x: 0,
         y: Math.PI,
         z: -Math.PI,
-        duration: 10,
+        duration: 8,
         ease: "power1.inOut",
       },
-      "-=25%"
+      "-=50%"
     );
     tl.from(
       ringContainer.current.rotation,
@@ -37,7 +39,7 @@ export function Planet(props) {
         x: 0.8,
         y: 0,
         z: 0,
-        duration: 10,
+        duration: 8,
         ease: "power1.inOut",
       },
       "<"

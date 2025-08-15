@@ -9,6 +9,8 @@ const AnimatedHeaderSection = ({
   text,
   textColor,
   withScrollTrigger = false,
+  titleClassName = "",
+  blendMode = false,
 }) => {
   const contextRef = useRef(null);
   const headerRef = useRef(null);
@@ -39,7 +41,7 @@ const AnimatedHeaderSection = ({
     );
   }, []);
   return (
-    <div ref={contextRef}>
+    <div ref={contextRef} className={blendMode ? "mix-blend-difference" : ""}>
       <div style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}>
         <div
           ref={headerRef}
@@ -52,7 +54,7 @@ const AnimatedHeaderSection = ({
           </p>
           <div className="px-10">
             <h1
-              className={`flex flex-col gap-12 uppercase banner-text-responsive sm:gap-16 md:block ${textColor}`}
+              className={`flex flex-col gap-12 uppercase banner-text-responsive sm:gap-16 md:block ${textColor} ${titleClassName}`}
             >
               {titleParts.map((part, index) => (
                 <span key={index}>{part} </span>
