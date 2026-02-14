@@ -8,6 +8,7 @@ import About from "./sections/About";
 import Works from "./sections/Works";
 import ContactSummary from "./sections/ContactSummary";
 import Contact from "./sections/Contact";
+import SolarSection from "./sections/SolarSection";
 
 const LoadingScreen = () => (
   <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-700 font-light">
@@ -32,6 +33,7 @@ const App = () => {
         <Works />
         <ContactSummary />
         <Contact />
+        <SolarSection />
       </Suspense>
     </ReactLenis>
   );

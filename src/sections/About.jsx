@@ -10,10 +10,10 @@ const About = () => {
     from prototype to production`;
   const aboutText = `Obsessed with building fast, intuitive apps—from pixel-perfect React UIs to bulletproof serverless backends. Every line of code is a promise: quality that users feel.
   When I’m not shipping:
-👩‍💻 Open-sourcing my latest experiment (or hacking on yours)
-🎥 Creating 3D components for my library of scroll triggers and animations
-📚 Creating and compiling datasets into usable data structures for training artificial intelligence models
-🎸 Strumming chords while CI pipelines pass (multitasking at its finest)`;
+ Open-sourcing my latest experiment (or hacking on yours)
+ Creating 3D components for my library of scroll triggers and animations
+ Creating and compiling datasets into usable data structures for training artificial intelligence models
+ Strumming chords while CI pipelines pass (multitasking at its finest)`;
   const imgRef = useRef(null);
   useGSAP(() => {
     gsap.to("#about", {
