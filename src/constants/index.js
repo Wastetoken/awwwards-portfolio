@@ -146,7 +146,7 @@ export const projects = [
     id: 9,
     name: "Luxora",
     description: "React Component Library.",
-    href: "https://luxora-ui.lovable.app",
+    href: "https://luxora-ui.vercel.app/",
     image: "/assets/projects/Works/Luxora-1.PNG",
     bgImage: "/assets/backgrounds/map.jpg",
   },
