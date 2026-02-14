@@ -142,6 +142,14 @@ export const projects = [
     image: "/assets/projects/Works/Code-Merge-0.PNG",
     bgImage: "/assets/backgrounds/map.jpg",
   },
+  {
+    id: 9,
+    name: "Luxora",
+    description: "React Component Library.",
+    href: "https://luxora-ui.lovable.app",
+    image: "/assets/projects/Works/Luxora.PNG",
+    bgImage: "/assets/backgrounds/map.jpg",
+  },
 ];
 export const socials = [
   { name: "Instagram", href: "" },
